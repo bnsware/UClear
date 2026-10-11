@@ -12,6 +12,16 @@ UClear removes programs the way you expect: it runs the program's own uninstalle
 
 It is **not** a "PC booster" or Registry cleaner. It has no telemetry, no ads and no online component. Every deletion is checked again right before it happens, and anything that belongs to Windows is never offered for deletion.
 
+<p align="center"><img src="docs/screenshots/en/apps.png" width="820" alt="UClear: an app selected with its leftovers listed"></p>
+
+## Screenshots
+
+| Previously removed programs | Invalid references |
+|---|---|
+| <img src="docs/screenshots/en/leftovers.png" alt="Leftover candidates of removed programs"> | <img src="docs/screenshots/en/invalid-references.png" alt="Broken entries sorted by decision"> |
+| **Temporary files** | |
+| <img src="docs/screenshots/en/temp-files.png" alt="Temporary files tool"> | |
+
 ## Highlights
 
 - **Uninstall + leftover cleanup** – runs the uninstaller, then scans folders, Registry keys and Registry values that still point to the program.

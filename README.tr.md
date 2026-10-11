@@ -12,6 +12,16 @@ UClear programları beklediğin gibi kaldırır: önce programın kendi kaldır�
 
 "PC hızlandırıcı" veya Registry temizleyici **değildir**. Telemetri, reklam ve çevrimiçi bileşen içermez. Her silme işleminden hemen önce öğe yeniden doğrulanır ve Windows'a ait hiçbir şey silinmek üzere önerilmez.
 
+<p align="center"><img src="docs/screenshots/tr/apps.png" width="820" alt="UClear: seçili uygulama ve kalıntıları"></p>
+
+## Ekran görüntüleri
+
+| Önceden kaldırılanlar | Geçersiz başvurular |
+|---|---|
+| <img src="docs/screenshots/tr/leftovers.png" alt="Kaldırılmış programların kalıntı adayları"> | <img src="docs/screenshots/tr/invalid-references.png" alt="Karara göre ayrılmış bozuk kayıtlar"> |
+| **Geçici dosyalar** | |
+| <img src="docs/screenshots/tr/temp-files.png" alt="Geçici dosyalar aracı"> | |
+
 ## Öne çıkanlar
 
 - **Kaldırma + kalıntı temizliği:** Kaldırıcıyı çalıştırır, ardından programa hâlâ işaret eden klasörleri, Registry anahtarlarını ve değerlerini tarar.
