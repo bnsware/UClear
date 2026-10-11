@@ -1,0 +1,11 @@
+﻿<Application x:Class="UClear.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:UClear"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Theme.xaml"/></ResourceDictionary.MergedDictionaries>
+            <local:DisplayText x:Key="Display"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

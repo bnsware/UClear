@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+ <ItemGroup><Compile Include="../src/UClear/Models.cs" Link="Models.cs"/><Compile Include="../src/UClear/Core.cs" Link="Core.cs"/><Compile Include="../src/UClear/RegistryReferences.cs" Link="RegistryReferences.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../src/UClear/CleanupSelection.cs" Link="CleanupSelection.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../src/UClear/FileLocks.cs" Link="FileLocks.cs"/></ItemGroup>
+ <ItemGroup><Compile Include="../src/UClear/ProcessControl.cs" Link="ProcessControl.cs"/></ItemGroup>
+<ItemGroup><Compile Include="../src/UClear/CleanupVerification.cs" Link="CleanupVerification.cs"/></ItemGroup><ItemGroup><Compile Include="../src/UClear/UtilityTools.cs" Link="UtilityTools.cs"/></ItemGroup><ItemGroup><Compile Include="../src/UClear/InvalidReferences.cs" Link="InvalidReferences.cs"/></ItemGroup><ItemGroup><Compile Include="../src/UClear/Leftovers.cs" Link="Leftovers.cs"/></ItemGroup><ItemGroup><Compile Include="../src/UClear/StoreApps.cs" Link="StoreApps.cs"/></ItemGroup><ItemGroup><Compile Include="../src/UClear/Loc.cs" Link="Loc.cs"/></ItemGroup></Project>
+
+
+

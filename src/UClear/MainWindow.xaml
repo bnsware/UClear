@@ -1,0 +1,170 @@
+<Window x:Class="UClear.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:u="clr-namespace:UClear"
+ Title="{u:T 'UClear — Uygulama kaldırıcı', 'UClear — App uninstaller'}" Icon="Assets/UClear.ico" Width="1120" Height="740" MinWidth="980" MinHeight="650" Background="#10161E" Foreground="#EEF2F7" FontFamily="Segoe UI"
+ WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize" StateChanged="Window_StateChanged" UseLayoutRounding="True" SnapsToDevicePixels="True">
+ <WindowChrome.WindowChrome><WindowChrome CaptionHeight="42" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="12" UseAeroCaptionButtons="False"/></WindowChrome.WindowChrome>
+ <Border x:Name="WindowFrame" BorderBrush="#33404F" BorderThickness="1" CornerRadius="12" Background="#10161E">
+  <Grid><Grid.RowDefinitions><RowDefinition Height="42"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+   <Border Background="#171F29" BorderBrush="#293442" BorderThickness="0,0,0,1" CornerRadius="12,12,0,0">
+    <Grid>
+     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+      <Image Source="Assets/UClear.png" Width="22" Height="22" RenderOptions.BitmapScalingMode="HighQuality"/>
+      <TextBlock Text="UClear" FontSize="12" FontWeight="SemiBold" Margin="9,0,0,0" VerticalAlignment="Center"/>
+      <TextBlock Text="{u:T 'UYGULAMA KALDIRICI', 'APP UNINSTALLER'}" Foreground="#8394A9" FontSize="9" Margin="15,0,0,0" VerticalAlignment="Center"/>
+     </StackPanel>
+     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,0">
+      <Button Style="{StaticResource CaptionButton}" Click="Minimize_Click" ToolTip="{u:T 'Küçült', 'Minimize'}" AutomationProperties.Name="{u:T 'Küçült', 'Minimize'}"><Path Data="M 0,5 L 10,5" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" Width="10" Height="10"/></Button>
+      <Button x:Name="MaximizeButton" Style="{StaticResource CaptionButton}" Click="Maximize_Click" ToolTip="{u:T 'Büyüt', 'Maximize'}" AutomationProperties.Name="{u:T 'Büyüt', 'Maximize'}"><Path x:Name="MaximizeGlyph" Data="M 0,0 L 10,0 10,10 0,10 Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" Width="10" Height="10"/></Button>
+      <Button Style="{StaticResource CloseCaptionButton}" Click="Close_Click" ToolTip="{u:T 'Kapat', 'Close'}" AutomationProperties.Name="{u:T 'Kapat', 'Close'}"><Path Data="M 0,0 L 10,10 M 10,0 L 0,10" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.2" Width="10" Height="10"/></Button>
+     </StackPanel>
+    </Grid>
+   </Border>
+   <Grid Grid.Row="1" Margin="20,14,20,12">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <Grid Margin="0,0,0,16">
+     <StackPanel Orientation="Horizontal">
+      <Button x:Name="AppsNav" Content="{u:T 'Uygulamalar', 'Apps'}" Click="Apps_Click" Background="#25443D"/>
+      <Button x:Name="FormerNav" Content="{u:T 'Önceden kaldırılanlar', 'Previously removed'}" Click="Former_Click"/>
+      <Button x:Name="HistoryNav" Content="{u:T 'İşlem geçmişi', 'History'}" Click="History_Click"/>
+      <Button x:Name="ToolsNav" Content="{u:T 'Araçlar', 'Tools'}" Click="Tools_Click"/><Button x:Name="FolderLocksNav" Content="{u:T 'Klasör kilitleri', 'Folder locks'}" Click="FolderLocks_Click"/>
+     </StackPanel>
+     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"><TextBlock Text="{u:T '●  YEREL VE ÇEVRİMDIŞI', '●  LOCAL AND OFFLINE'}" Foreground="#63D8BB" FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"/><Button x:Name="LanguageButton" Content="{u:T 'English', 'Türkçe'}" Click="Language_Click" Margin="0" ToolTip="{u:T 'Arayüz dilini İngilizce yap', 'Switch the interface to Turkish'}"/></StackPanel>
+    </Grid>
+    <Grid Grid.Row="1" Margin="0,0,0,16"><StackPanel>
+     <TextBlock x:Name="PageTitle" Text="{u:T 'Uygulamalar', 'Apps'}" FontSize="23" FontWeight="SemiBold"/>
+     <TextBlock x:Name="PageSubtitle" Text="{u:T 'Bir uygulama seç. Kaldır, kalıntılarını incele, sonucu doğrula.', 'Pick an app. Uninstall it, review its leftovers, verify the result.'}" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,5,0,0"/>
+    </StackPanel><TextBlock x:Name="AppCount" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12"/></Grid>
+    <Grid Grid.Row="2">
+     <Grid x:Name="Workspace">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="320"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Grid>
+       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+       <StackPanel x:Name="InstalledHeader" Margin="0,0,0,10">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+         <TextBox x:Name="SearchBox" Tag="{u:T 'Uygulama veya yayıncı ara…', 'Search apps or publishers…'}" TextChanged="Search_Changed" AutomationProperties.Name="{u:T 'Uygulama veya yayıncı ara', 'Search apps or publishers'}"/>
+         <Button Grid.Column="1" x:Name="RefreshButton" Width="38" Height="38" Padding="0" Margin="8,0,0,0" Click="Refresh_Click" ToolTip="{u:T 'Listeyi yenile', 'Refresh the list'}" AutomationProperties.Name="{u:T 'Listeyi yenile', 'Refresh the list'}">
+          <Path Data="M 13,5 A 6,6 0 1 0 14,10 M 13,1 L 13,5 9,5" Width="16" Height="16" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+         </Button>
+        </Grid>
+        <Grid Margin="0,8,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+         <ComboBox x:Name="AppFilterBox" SelectionChanged="AppView_Changed" ToolTip="{u:T 'Hangi uygulamalar gösterilsin', 'Which apps to show'}" AutomationProperties.Name="{u:T 'Filtre', 'Filter'}">
+          <ComboBoxItem Content="{u:T 'Tüm uygulamalar', 'All apps'}" IsSelected="True"/><ComboBoxItem Content="{u:T 'Masaüstü programları', 'Desktop programs'}"/><ComboBoxItem Content="Microsoft Store"/><ComboBoxItem Content="{u:T 'Son 30 günde kurulan', 'Installed in the last 30 days'}"/><ComboBoxItem Content="{u:T '1 GB\'tan büyük', 'Larger than 1 GB'}"/>
+         </ComboBox>
+         <ComboBox Grid.Column="2" x:Name="AppSortBox" SelectionChanged="AppView_Changed" ToolTip="{u:T 'Sıralama', 'Sort'}" AutomationProperties.Name="{u:T 'Sıralama', 'Sort'}">
+          <ComboBoxItem Content="{u:T 'Ada göre', 'By name'}" IsSelected="True"/><ComboBoxItem Content="{u:T 'Boyuta göre', 'By size'}"/><ComboBoxItem Content="{u:T 'Kurulum tarihine göre', 'By install date'}"/><ComboBoxItem Content="{u:T 'Yayıncıya göre', 'By publisher'}"/>
+         </ComboBox>
+        </Grid>
+       </StackPanel>
+       <Border x:Name="InstalledPanel" Grid.Row="1" Background="#181F28" CornerRadius="12" BorderBrush="#293543" BorderThickness="1" Padding="6">
+        <DockPanel>
+         <!-- Shown once at least one app is ticked. -->
+         <Grid x:Name="BulkBar" DockPanel.Dock="Bottom" Margin="4,8,4,2" Visibility="Collapsed"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <StackPanel VerticalAlignment="Center"><TextBlock x:Name="BulkCount" FontSize="11" FontWeight="SemiBold"/><TextBlock FontSize="10"><Hyperlink Click="ClearAppSelection_Click" Foreground="#63D8BB"><Run Text="{u:T 'Seçimi temizle', 'Clear selection'}"/></Hyperlink></TextBlock></StackPanel>
+          <Button Grid.Column="1" x:Name="BulkUninstallButton" Content="{u:T 'Seçilenleri kaldır', 'Uninstall selected'}" Background="#A44756" Margin="0" Click="BulkUninstall_Click" ToolTip="{u:T 'İşaretli programlar sırayla kaldırılır; kalıntıları tek seferde bulunup temizlenir', 'Ticked programs are uninstalled one after another; their leftovers are found and cleaned in one go'}"/>
+         </Grid>
+         <Grid><ListBox x:Name="AppList" SelectionChanged="App_Selected" PreviewMouseRightButtonDown="AppList_RightClick" AutomationProperties.Name="{u:T 'Yüklü uygulamalar', 'Installed apps'}">
+          <ListBox.ContextMenu><ContextMenu x:Name="AppMenu" Opened="AppMenu_Opened">
+           <MenuItem x:Name="MenuUninstall" Header="{u:T 'Kaldır ve tara', 'Uninstall and scan'}" Click="Uninstall_Click"/>
+           <MenuItem x:Name="MenuScan" Header="{u:T 'Yalnızca kalıntıları tara', 'Scan for leftovers only'}" Click="Scan_Click"/>
+           <MenuItem x:Name="MenuForce" Header="{u:T 'Zorla kaldır (kaldırıcı olmadan)', 'Force uninstall (without the uninstaller)'}" Click="ForceUninstall_Click"/>
+           <Separator/>
+           <MenuItem x:Name="MenuFolder" Header="{u:T 'Kurulum klasörünü aç', 'Open install folder'}" Click="OpenFolder_Click"/>
+           <MenuItem x:Name="MenuRegistry" Header="{u:T 'Registry\'de aç', 'Open in Registry'}" Click="OpenRegistry_Click"/>
+           <MenuItem Header="{u:T 'İnternette ara', 'Search the web'}" Click="SearchWeb_Click"/>
+           <Separator/>
+           <MenuItem Header="{u:T 'Adı kopyala', 'Copy name'}" Click="CopyName_Click"/>
+           <MenuItem x:Name="MenuCopyCommand" Header="{u:T 'Kaldırma komutunu kopyala', 'Copy uninstall command'}" Click="CopyCommand_Click"/>
+          </ContextMenu></ListBox.ContextMenu>
+          <ListBox.ItemTemplate><DataTemplate>
+           <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <CheckBox IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanRemove}" VerticalAlignment="Center" ToolTip="{u:T 'Toplu kaldırma için seç', 'Select for bulk uninstall'}" AutomationProperties.Name="{u:T 'Toplu kaldırma için seç', 'Select for bulk uninstall'}"/>
+            <Border Grid.Column="1" Width="34" Height="34" Background="#25313E" CornerRadius="9" VerticalAlignment="Center"><Image Source="{Binding Icon}" Width="26" Height="26" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/></Border>
+            <StackPanel Grid.Column="2" VerticalAlignment="Center"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}"/><TextBlock Text="{Binding Subtitle}" Foreground="#8FA1B6" FontSize="10" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Subtitle}"/></StackPanel>
+           </Grid>
+          </DataTemplate></ListBox.ItemTemplate>
+         </ListBox><TextBlock x:Name="NoApps" Text="{u:T 'Aramanla eşleşen uygulama yok.', 'No apps match your search.'}" Visibility="Collapsed" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid>
+        </DockPanel>
+       </Border>
+       <Border x:Name="FormerPanel" Grid.RowSpan="2" Background="#181F28" BorderBrush="#293543" BorderThickness="1" CornerRadius="12" Padding="16" Visibility="Collapsed">
+        <DockPanel><StackPanel DockPanel.Dock="Top">
+         <TextBlock Text="{u:T 'Kalan izleri bul', 'Find leftover traces'}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+         <TextBlock Text="{u:T 'Ad yazmadan Kalıntıları bul\'a basarsan bilgisayar taranır. İşaretleyip Seçilenleri kaldır de; tüm izleri bulunup silinir.', 'Press Find leftovers without a name to scan the computer. Tick candidates and choose Remove selected; all their traces are found and deleted.'}" Foreground="{StaticResource Muted}" TextWrapping="Wrap" FontSize="11" Margin="0,0,0,12"/>
+         <TextBox x:Name="FormerName" Tag="{u:T 'Uygulama adı (isteğe bağlı) · örn. Discord', 'App name (optional) · e.g. Discord'}" AutomationProperties.Name="{u:T 'Önceden kaldırılan uygulama adı', 'Name of the previously removed app'}"/>
+         <TextBox x:Name="FormerPath" Tag="{u:T 'Eski kurulum klasörü (isteğe bağlı)', 'Old install folder (optional)'}" Margin="0,8,0,0" AutomationProperties.Name="{u:T 'Eski kurulum klasörü', 'Old install folder'}"/>
+         <Button x:Name="FormerScanButton" Content="{u:T 'Kalıntıları bul', 'Find leftovers'}" Background="#61D9B6" Foreground="#10281F" Click="FormerScan_Click" Margin="0,10,0,0"/>
+         <Grid Margin="0,16,0,6"><TextBlock x:Name="LeftoverHeader" Text="{u:T 'Kalıntı adayları', 'Leftover candidates'}" FontWeight="SemiBold" FontSize="12" ToolTip="{u:T 'Program klasörü: programın kurulum klasörü kalmış.&#10;Veri klasörü: programın ayar/önbellek klasörü kalmış; oyun kayıtları içerebilir.&#10;Yeni kullanılmış: son 3 günde değişmiş, hâlâ kullanılıyor olabilir.&#10;Kayıtsız program: klasörde çalışır program var; kalıntı değil, sadece kaldırma kaydı yok.', 'Program folder: the program\'s install folder was left behind.&#10;Data folder: the program\'s settings/cache folder was left behind; it may contain game saves.&#10;Recently used: changed in the last 3 days, may still be in use.&#10;Unregistered program: the folder holds a working program; not a leftover, just missing its uninstall entry.'}"/><TextBlock HorizontalAlignment="Right" FontSize="11"><Hyperlink Click="FindLeftovers_Click" Foreground="#63D8BB"><Run Text="{u:T 'Yeniden ara', 'Search again'}"/></Hyperlink></TextBlock></Grid>
+        </StackPanel>
+        <Button x:Name="RemoveLeftoversButton" DockPanel.Dock="Bottom" Content="{u:T 'Seçilenleri kaldır', 'Remove selected'}" Background="#A44756" Margin="0,10,0,0" Click="RemoveLeftovers_Click" ToolTip="{u:T 'İşaretli adayların klasörleri, Registry kayıtları ve diğer izleri tek seferde bulunup silinir', 'Folders, Registry entries and other traces of the ticked candidates are found and deleted in one go'}"/>
+        <Grid><ListBox x:Name="LeftoverList" SelectionChanged="Leftover_Selected" MouseDoubleClick="Leftover_DoubleClick" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{u:T 'Kalıntı adayları', 'Leftover candidates'}">
+         <ListBox.ItemTemplate><DataTemplate>
+          <Grid Margin="0,2" ToolTip="{Binding Reason}"><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+           <CheckBox IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanRemove}" VerticalAlignment="Center" AutomationProperties.Name="{u:T 'Kaldırmak için seç', 'Select for removal'}"/>
+           <StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Path}" Foreground="#8FA1B6" FontSize="10" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/><TextBlock Text="{Binding Summary}" Foreground="#63D8BB" FontSize="10" Margin="0,2,0,0"/></StackPanel>
+          </Grid>
+         </DataTemplate></ListBox.ItemTemplate>
+        </ListBox><TextBlock x:Name="NoLeftovers" Text="{u:T 'Aramak için ad yazmadan Kalıntıları bul\'a bas.', 'Press Find leftovers without a name to search.'}" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" IsHitTestVisible="False"/></Grid>
+        </DockPanel>
+       </Border>
+      </Grid>
+      <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <Border x:Name="SelectedPanel" Background="#1A252F" BorderBrush="#2D3E4C" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,14">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="48"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <Border Width="38" Height="38" CornerRadius="10" Background="#283645" VerticalAlignment="Top"><Image x:Name="SelectedIcon" Width="30" Height="30" RenderOptions.BitmapScalingMode="HighQuality"/></Border>
+          <StackPanel Grid.Column="1" Margin="0,0,12,0"><TextBlock Text="{u:T 'SEÇİLİ UYGULAMA', 'SELECTED APP'}" Foreground="#63D8BB" FontSize="9"/>
+           <TextBlock x:Name="SelectedName" Text="{u:T 'Bir uygulama seç', 'Pick an app'}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,5,0,5" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+           <TextBlock x:Name="SelectedDetail" Foreground="{StaticResource Muted}" FontSize="10" TextTrimming="CharacterEllipsis" MaxHeight="30" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+          </StackPanel>
+         </Grid>
+         <StackPanel Grid.Column="1" MinWidth="120"><Button x:Name="UninstallButton" Content="{u:T 'Kaldır ve tara', 'Uninstall and scan'}" Background="#61D9B6" Foreground="#10281F" Click="Uninstall_Click" IsEnabled="False" Margin="0,0,0,6"/><Button x:Name="ScanButton" Content="{u:T 'Yalnızca tara', 'Scan only'}" Click="Scan_Click" IsEnabled="False" Margin="0"/></StackPanel>
+        </Grid>
+       </Border>
+       <Grid Grid.Row="1" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock x:Name="ResultsTitle" Text="{u:T 'Kalıntı incelemesi', 'Leftover review'}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="ResultsSubtitle" Text="{u:T 'Tarama sonrası bulunan öğeler burada görünür.', 'Items found by the scan appear here.'}" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap" Margin="0,5,0,0"/></StackPanel>
+        <Button Grid.Column="1" x:Name="CancelButton" Content="{u:T 'Durdur', 'Stop'}" Click="Cancel_Click" Visibility="Collapsed" Margin="8,0,0,0" VerticalAlignment="Top"/>
+       </Grid>
+       <Border Grid.Row="2" Background="#181F28" CornerRadius="12" BorderBrush="#293543" BorderThickness="1" Padding="6">
+        <Grid><DataGrid x:Name="FindingsGrid" IsReadOnly="True" CanUserAddRows="False" SelectionMode="Single" SelectionUnit="FullRow" RowHeight="72" MinColumnWidth="36" CanUserResizeRows="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+         <DataGrid.Columns>
+          <DataGridTemplateColumn Width="40" CanUserResize="False" CanUserSort="False"><DataGridTemplateColumn.Header><CheckBox x:Name="AllFindings" Click="AllFindings_Click" ToolTip="{u:T 'Temizlenebilir öğelerin tümünü seç / bırak', 'Select / clear all removable items'}"/></DataGridTemplateColumn.Header><DataGridTemplateColumn.CellStyle><Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}"><Setter Property="Padding" Value="4,0"/></Style></DataGridTemplateColumn.CellStyle><DataGridTemplateColumn.CellTemplate><DataTemplate><CheckBox IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanDelete}" VerticalAlignment="Center" HorizontalAlignment="Center" AutomationProperties.Name="{u:T 'Kalıntıyı seç', 'Select leftover'}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="{u:T 'ÖĞE / KONUM', 'ITEM / LOCATION'}" Width="*" MinWidth="150" SortMemberPath="DisplayPath"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel VerticalAlignment="Center"><TextBlock Text="{Binding Kind, Converter={StaticResource Display}}" Foreground="#63D8BB" FontSize="10"/><TextBlock Text="{Binding DisplayPath}" FontSize="11" TextTrimming="CharacterEllipsis" ToolTip="{Binding DisplayPath}" Margin="0,5,0,0"/><TextBlock Text="{Binding Note}" Foreground="#8699B0" FontSize="10" Margin="0,3,0,0"/></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="{u:T 'EŞLEŞME / SONUÇ', 'MATCH / RESULT'}" Width="145" SortMemberPath="Rank"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel VerticalAlignment="Center"><TextBlock Text="{Binding Confidence, Converter={StaticResource Display}}" FontSize="11" TextTrimming="CharacterEllipsis" ToolTip="{Binding Reason}"/><TextBlock Text="{Binding Result, Converter={StaticResource Display}}" Foreground="#96A8BE" FontSize="10" TextTrimming="CharacterEllipsis" ToolTip="{Binding Result, Converter={StaticResource Display}}" Margin="0,6,0,0"/></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+         </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel x:Name="EmptyState" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" IsHitTestVisible="False"><TextBlock Text="⌕" Foreground="#426558" FontSize="42" HorizontalAlignment="Center"/><TextBlock x:Name="EmptyTitle" Text="{u:T 'Kalıntıları birlikte inceleyelim', 'Let\'s review the leftovers together'}" FontSize="15" HorizontalAlignment="Center" Margin="0,8,0,0"/><TextBlock x:Name="EmptyDescription" Text="{u:T 'Başlamak için bir uygulama seç.', 'Pick an app to start.'}" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap" TextAlignment="Center" Margin="0,7,0,0"/></StackPanel>
+        </Grid>
+       </Border>
+       <Grid Grid.Row="3" Margin="0,12,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Grid Margin="0,0,0,9"><TextBlock x:Name="SelectionLabel" Text="{u:T '0 öğe seçili', '0 items selected'}" FontSize="11"/><TextBlock Text="{u:T 'Kalıcı silme · Yedek yok', 'Permanent deletion · No backup'}" HorizontalAlignment="Right" Foreground="#8FA1B6" FontSize="10"/></Grid>
+        <Grid Grid.Row="1"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+         <Button x:Name="DetailsButton" Content="{u:T 'İncele', 'Inspect'}" Click="Details_Click"/><Button Grid.Column="1" x:Name="ReportButton" Content="{u:T 'Rapor', 'Report'}" Click="Report_Click"/><Button Grid.Column="2" x:Name="LocksButton" Content="{u:T 'Kilitler', 'Locks'}" Click="Locks_Click" ToolTip="{u:T 'Seçili klasördeki dosyaları kullanan süreçleri göster', 'Show processes using files in the selected folder'}"/><Button Grid.Column="3" x:Name="DeleteButton" Content="{u:T 'Seçilenleri sil', 'Delete selected'}" Background="#A44756" Click="Delete_Click" IsEnabled="False" Margin="0" HorizontalAlignment="Right"/>
+        </Grid>
+       </Grid>
+      </Grid>
+     </Grid>
+     <Border x:Name="HistoryPanel" Visibility="Collapsed" Background="#181F28" BorderBrush="#293543" BorderThickness="1" CornerRadius="12" Padding="8">
+      <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+       <Grid Margin="8,4,0,12"><StackPanel VerticalAlignment="Center"><TextBlock Text="{u:T 'İşlem kayıtları', 'Activity log'}" FontWeight="SemiBold"/><TextBlock x:Name="HistorySummary" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,4,0,0"/></StackPanel><Button x:Name="ClearHistoryButton" Content="{u:T 'Geçmişi temizle', 'Clear history'}" Click="ClearHistory_Click" HorizontalAlignment="Right" Background="#593440" Margin="0"/></Grid>
+      <DataGrid Grid.Row="1" x:Name="HistoryGrid" IsReadOnly="True" RowHeight="56" SelectionMode="Single" CanUserResizeRows="False">
+       <DataGrid.Columns>
+        <DataGridTextColumn Header="{u:T 'ZAMAN', 'TIME'}" Binding="{Binding Time, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Width="135"/>
+        <DataGridTextColumn Header="{u:T 'UYGULAMA', 'APP'}" Binding="{Binding App, Converter={StaticResource Display}}" Width="190"/>
+        <DataGridTextColumn Header="{u:T 'İŞLEM', 'ACTION'}" Binding="{Binding Action, Converter={StaticResource Display}}" Width="110"/>
+        <DataGridTemplateColumn Header="{u:T 'AYRINTI', 'DETAILS'}" Width="*"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Detail}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Detail}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="44" CanUserResize="False"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+         <Button Click="CopyHistory_Click" Width="28" Height="28" Margin="0" Padding="0" ToolTip="{u:T 'Yolu / ayrıntıyı kopyala', 'Copy path / details'}" AutomationProperties.Name="{u:T 'Geçmiş kaydını kopyala', 'Copy history entry'}">
+          <Path Data="M 5,4 L 12,4 12,13 5,13 Z M 2,10 L 2,1 9,1" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.3" Width="14" Height="14" Stretch="Uniform"/>
+         </Button>
+        </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       </DataGrid.Columns>
+      </DataGrid>
+       <TextBlock Grid.Row="1" x:Name="EmptyHistory" Text="{u:T 'Henüz işlem kaydı yok.', 'No activity yet.'}" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" IsHitTestVisible="False"/>
+      </Grid>
+     </Border>
+    </Grid>
+    <StackPanel Grid.Row="3" Margin="0,12,0,0"><ProgressBar x:Name="Progress" Height="2" IsIndeterminate="True" Visibility="Collapsed" Foreground="#61D9B6" Background="#27313E"/><TextBlock x:Name="Status" Text="{u:T 'Uygulama listesi hazırlanıyor…', 'Preparing the app list…'}" Foreground="#8FA1B6" FontSize="10" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Margin="0,6,0,0"/></StackPanel>
+   </Grid>
+  </Grid>
+ </Border>
+</Window>
+
+
